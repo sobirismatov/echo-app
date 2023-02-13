@@ -1,25 +1,26 @@
 from flask import Flask, request, jsonify
+from telegram import Bot, Update
+from telegram.ext import Dispatcher, CommandHandler, MessageHandler, Filters
+import os
 
+# flask app
 app = Flask(__name__)
 
-@app.route('/api', methods=['POST', 'GET'])
+# telegram bot
+TOKEN = os.environ['TOKEN']
+bot = Bot(token=TOKEN)
+
+@app.route('/')
+def index():
+    return 'ok'
+
+@app.route('/api', methods=['POST'])
 def api():
+    update = Update.de_json(request.get_json(force=True), bot)
 
-    data = request.get_json(force=True)
+    chat_id = update.message.chat_id
+    text = update.message.text
 
-    a = data.get('a', 0)
-    b = data.get('b', 0)
-    
-    return jsonify({
-        'sum': a+b
-    })
+    bot.send_message(chat_id=update.message.chat_id, text=text)
 
-
-@app.route('/api/<username>')
-def login(username: str):
-    print(username)
-    return f'hi, {username}'
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    return jsonify({'ok': True})
