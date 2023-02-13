@@ -6,9 +6,19 @@ app = Flask(__name__)
 def api():
 
     data = request.get_json(force=True)
-    
-    return jsonify(data)
 
+    a = data.get('a', 0)
+    b = data.get('b', 0)
+    
+    return jsonify({
+        'sum': a+b
+    })
+
+
+@app.route('/api/<username>')
+def login(username: str):
+    print(username)
+    return f'hi, {username}'
 
 
 if __name__ == '__main__':
